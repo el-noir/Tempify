@@ -50,8 +50,8 @@ Tempify uses a **commission-based model**:
 
 # Clone the repo
 ```js
-git clone https://github.com/el-noir/tempify.git
-cd tempify
+git clone https://github.com/el-noir/Tempify.git
+cd Tempify
 
 # Install dependencies
 npm install
@@ -61,7 +61,7 @@ npm install
 ```js
 MONGODB_URI=
 RESEND_API_KEY=
-NEXTAUTH_SECRET=el-noir
+NEXTAUTH_SECRET=
 NEXTAUTH_URL=
 export STRIPE_SECRET_KEY="sk_test_..."                          # Your secret key
 export NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."        # Used on frontend

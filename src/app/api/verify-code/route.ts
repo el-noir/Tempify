@@ -1,6 +1,5 @@
 import dbConnect from "@/lib/connection/dbConnect";
 import UserModel from "@/model/User";
-import { success } from "zod";
 
 export async function POST (request: Request){
     await dbConnect()
@@ -27,7 +26,9 @@ export async function POST (request: Request){
         const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date()
 
         if(isCodeValid && isCodeNotExpired){
+            user.isVerified = true;
           await user.save()
+               
           console.log("Code is valid")
          return Response.json(
             {

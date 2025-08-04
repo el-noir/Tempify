@@ -17,7 +17,6 @@ function VerifyAccount() {
     const router = useRouter()
      const params = useParams();
     const username = typeof params.username === 'string' ? params.username : '';
-
     
       const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),

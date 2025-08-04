@@ -26,6 +26,11 @@ const UserSchema : Schema<User> = new Schema({
         unique: true,
         match: [/^[\w.-]+@[\w.-]+\.\w{2,}$/, 'please use a valid email']
     },
+    password: {
+     type: String,
+    required: [true, "Password is required"],
+    },
+
            verifyCode: {
         type: String,
         required: [true, "Verify code is required"]

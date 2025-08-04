@@ -1,9 +1,8 @@
 "use client"
-
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, Copy, User, LinkIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -15,7 +14,6 @@ function Dashboard() {
       router.push("/sign-in")
     },
   })
-
   const router = useRouter()
 
   useEffect(() => {
@@ -26,10 +24,10 @@ function Dashboard() {
   // Show loading while session is loading
   if (status === "loading") {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen bg-slate-50">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading dashboard...</p>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-indigo-600" />
+          <p className="text-slate-600">Loading dashboard...</p>
         </div>
       </div>
     )
@@ -38,20 +36,19 @@ function Dashboard() {
   // Redirect if not authenticated
   if (status === "unauthenticated" || !session?.user) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen bg-slate-50">
         <div className="text-center">
-          <p className="mb-4">Access denied. Please sign in.</p>
-          <Button onClick={() => router.push("/sign-in")}>Go to Sign In</Button>
+          <p className="mb-4 text-slate-600">Access denied. Please sign in.</p>
+          <Button onClick={() => router.push("/sign-in")} className="bg-indigo-600 hover:bg-indigo-700">
+            Go to Sign In
+          </Button>
         </div>
       </div>
     )
   }
 
   const { username } = session.user
-  const baseUrl =
-    typeof window !== "undefined"
-      ? `${window.location.protocol}//${window.location.host}`
-      : ""
+  const baseUrl = typeof window !== "undefined" ? `${window.location.protocol}//${window.location.host}` : ""
   const profileUrl = `${baseUrl}/u/${username}`
 
   const copyToClipboard = () => {
@@ -60,25 +57,62 @@ function Dashboard() {
   }
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
-      <p className="text-gray-600 mb-6">Welcome back, {username}!</p>
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+          <p className="text-slate-600">Welcome back, {username}!</p>
+        </div>
 
-      <div className="p-4 bg-green-50 border border-green-200 rounded">
-        <p className="text-green-800">🎉 Authentication successful! You are now logged in.</p>
-        <p className="text-sm text-green-600 mt-2">Session: {JSON.stringify(session.user, null, 2)}</p>
-      </div>
+        {/* Success Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <User className="w-5 h-5 text-green-600" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-slate-900 mb-1">🎉 Authentication Successful!</h3>
+              <p className="text-slate-600 mb-3">You are now logged in and ready to use the platform.</p>
+              <details className="mt-3">
+                <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-700">
+                  View session details
+                </summary>
+                <pre className="mt-2 text-xs bg-slate-50 p-3 rounded-lg overflow-auto text-slate-700">
+                  {JSON.stringify(session.user, null, 2)}
+                </pre>
+              </details>
+            </div>
+          </div>
+        </div>
 
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>
-        <div className="flex items-center">
-          <input
-            type="text"
-            value={profileUrl}
-            disabled
-            className="flex-1 p-2 mr-2 bg-gray-100 border rounded"
-          />
-          <Button onClick={copyToClipboard}>Copy</Button>
+        {/* Profile URL Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <LinkIcon className="w-5 h-5 text-indigo-600" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-slate-900 mb-1">Your Unique Profile Link</h3>
+              <p className="text-slate-600 mb-4">Share this link to let others find your profile.</p>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="text"
+                  value={profileUrl}
+                  disabled
+                  className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none"
+                />
+                <Button onClick={copyToClipboard} className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2">
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

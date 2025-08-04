@@ -1,16 +1,16 @@
 import mongoose, {Schema, Document} from 'mongoose'
 
 export interface User extends Document {
-    username: string,
-    email: string,
-    password: string,
-    verifyCode: string,
-    verifyCodeExpiry: Date,
-    isVerified: boolean,
-    resetPasswordToken?: string | null,
-    resetPasswordExpiry?: Date | null,
-    role: 'user' | 'admin',
-    isActive: boolean
+    username: string;
+    email: string;
+    password: string;
+    verifyCode: string;
+    verifyCodeExpiry: Date;
+    isVerified: boolean;
+    resetPasswordToken?: string | null;
+    resetPasswordExpiry?: Date | null;
+    role: 'user' | 'admin';
+    isActive: boolean;
 }
 
 const UserSchema : Schema<User> = new Schema({

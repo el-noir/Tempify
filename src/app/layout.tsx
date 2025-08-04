@@ -1,5 +1,5 @@
 import type React from 'react'
-import './global.css'
+import './globals.css'
 import AuthProvider from '../context/AuthProvider'
 
 export const metadata = {

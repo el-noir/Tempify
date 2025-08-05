@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
-
+import mongoose, { Schema, Document,model, models, Types } from 'mongoose';
+import type {Store} from './Store'
 export interface Product extends Document {
-    storeId: Types.ObjectId;
+    storeId: Types.ObjectId | Store;
     name: string;
     description?: string;
     price: number;

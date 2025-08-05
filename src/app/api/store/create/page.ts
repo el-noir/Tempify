@@ -6,6 +6,7 @@ import StoreModel from "@/model/Store";
 import StorePlanModel from "@/model/StorePlan";
 import {nanoid} from 'nanoid';
 import { success } from "zod";
+import { createStoreSchema } from "@/lib/validations";
 
 export async function POST(req:Request) {
     const session = await getServerSession(authOptions)
@@ -21,24 +22,23 @@ export async function POST(req:Request) {
 try {
         // db connecct
         dbConnect()
-    // extract name, description, planId from request
-    const {name, description, planId} = await req.json();
+
+        const body = await req.json()
+        const parseResult = createStoreSchema.safeParse(body)
+
+        if(!parseResult.success){
+                return NextResponse.json(
+        {
+          success: false,
+          message: "Validation failed",
+          errors: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+        }
     
-    // check if name and planid exist in the request
-    if(!name) {
-       return NextResponse.json(
-        { success: false, message: "Name is required" },
-        { status: 400 }
-        )
-    }
-
-       if(!planId) {
-       return NextResponse.json(
-        { success: false, message: "planId is required" },
-        { status: 400 }
-        )
-    }
-
+const {name, description, planId, expiresInHours} = parseResult.data;
+    
     // check if plan exist in db
     const plan = await StorePlanModel.findById(planId)
     

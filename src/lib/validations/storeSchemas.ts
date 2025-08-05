@@ -7,6 +7,11 @@ export const createStoreSchema = z.object({
   planId: z.string().min(1, "Store plan is required"),
 });
 
+export const titleValidation = z.string()
+                                .min(3, "Store name is too short")
+                                .max(50)
+                                .regex(/^[a-zA-Z0-9_]+$/, "Name must not contain special character")
+
 export const feedbackSchema = z.object({
   message: z.string().min(10, "Message too short"),
   email: z.string().email().optional(),

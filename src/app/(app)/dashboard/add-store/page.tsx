@@ -6,13 +6,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { Loader2, Store } from 'lucide-react'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
 import { motion } from 'framer-motion'
 import { z } from 'zod'
 import { createStoreSchema } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import axios, { AxiosError } from 'axios'
@@ -42,6 +42,8 @@ const AddStore = () => {
   const router = useRouter()
   const [plans, setPlans] = useState<StorePlan[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [nameMessage, setNameMessage] = useState('')
+  const [isCheckingName, setIsCheckingName] = useState(false)
 
   const form = useForm<z.infer<typeof createStoreSchema>>({
     resolver: zodResolver(createStoreSchema),
@@ -70,14 +72,41 @@ const AddStore = () => {
     fetchPlans()
   }, [])
 
+  useEffect(() => {
+    const checkNameUnique = async () => {
+      const name = form.watch('name')
+      if (name) {
+        setIsCheckingName(true)
+        setNameMessage('')
+        try {
+          const response = await axios.get<ApiResponse<null>>(`/api/store/check-title-unique?name=${encodeURIComponent(name)}`)
+          setNameMessage(response.data.message)
+        } catch (error) {
+          const axiosError = error as AxiosError<ApiResponse<null>>
+          setNameMessage(axiosError.response?.data.message ?? 'Error checking name')
+        } finally {
+          setIsCheckingName(false)
+        }
+      } else {
+        setNameMessage('')
+        setIsCheckingName(false)
+      }
+    }
+    const timer = setTimeout(checkNameUnique, 500) // Debounce for better UX
+    return () => clearTimeout(timer)
+  }, [form.watch('name')])
+
   const onSubmit = async (data: z.infer<typeof createStoreSchema>) => {
+    if (nameMessage !== 'Name is unique') {
+      toast.error('Please choose a unique store name')
+      return
+    }
     setIsSubmitting(true)
     try {
       const response = await axios.post<ApiResponse<{ _id: string; name: string; slug: string; expiresAt: string }>>(
         '/api/store/create',
         data
       )
-      console.log(response)
       if (response.data.success) {
         toast.success(response.data.message || 'Store created successfully!')
         router.push(`/stores/${response.data.store?.slug}`)
@@ -146,6 +175,9 @@ const AddStore = () => {
             <CardTitle className="text-lg font-medium text-slate-900">Choose a Plan</CardTitle>
           </CardHeader>
           <CardContent>
+            {plans.length === 0 && (
+              <p className="text-sm text-slate-500">No plans available at the moment.</p>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {plans.map((plan) => (
                 <motion.div
@@ -153,7 +185,7 @@ const AddStore = () => {
                   whileHover={{ scale: 1.03 }}
                   className={`p-4 rounded-lg border cursor-pointer transition-colors
                     ${form.watch('planId') === plan._id ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200'}`}
-                  onClick={() => form.setValue('planId', plan._id)}
+                  onClick={() => form.setValue('planId', plan._id, { shouldValidate: true, shouldDirty: true })}
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -168,7 +200,7 @@ const AddStore = () => {
               ))}
             </div>
             {form.formState.errors.planId && (
-              <p className="text-red-600 mt-2 text-sm">Please select a plan</p>
+              <p className="text-red-600 mt-2 text-sm">{form.formState.errors.planId.message}</p>
             )}
           </CardContent>
         </Card>
@@ -179,57 +211,93 @@ const AddStore = () => {
             <CardTitle className="text-lg font-medium text-slate-900">Store Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div>
-                <Label className="text-slate-900">Store Name</Label>
-                <Input
-                  {...form.register('name')}
-                  className="mt-1 bg-white border-slate-300 focus:border-indigo-600 focus:ring-indigo-600"
-                  placeholder="Enter your store name"
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-900">Store Name</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            className="mt-1 bg-white border-slate-300 focus:border-indigo-600 focus:ring-indigo-600"
+                            placeholder="Enter your store name"
+                          />
+                          {isCheckingName && (
+                            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-indigo-600" />
+                          )}
+                        </div>
+                      </FormControl>
+                      {nameMessage && (
+                        <p
+                          className={`text-sm mt-1 ${
+                            nameMessage === 'Name is unique' ? 'text-green-500' : 'text-red-500'
+                          }`}
+                        >
+                          {nameMessage}
+                        </p>
+                      )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {form.formState.errors.name && (
-                  <p className="text-red-600 mt-1 text-sm">{form.formState.errors.name.message}</p>
-                )}
-              </div>
 
-              <div>
-                <Label className="text-slate-900">Description</Label>
-                <Textarea
-                  {...form.register('description')}
-                  className="mt-1 bg-white border-slate-300 focus:border-indigo-600 focus:ring-indigo-600"
-                  placeholder="Describe your store (optional)"
-                  rows={4}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-900">Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          className="mt-1 bg-white border-slate-300 focus:border-indigo-600 focus:ring-indigo-600"
+                          placeholder="Describe your store (optional)"
+                          rows={4}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {form.formState.errors.description && (
-                  <p className="text-red-600 mt-1 text-sm">{form.formState.errors.description.message}</p>
-                )}
-              </div>
 
-              <div>
-                <Label className="text-slate-900">Additional Hours (Optional)</Label>
-                <Input
-                  type="number"
-                  {...form.register('expiresInHours', { valueAsNumber: true })}
-                  className="mt-1 bg-white border-slate-300 focus:border-indigo-600 focus:ring-indigo-600"
-                  placeholder="Extend plan duration in hours"
+                <FormField
+                  control={form.control}
+                  name="expiresInHours"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-900">Additional Hours (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                          className="mt-1 bg-white border-slate-300 focus:border-indigo-600 focus:ring-indigo-600"
+                          placeholder="Extend plan duration in hours"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {form.formState.errors.expiresInHours && (
-                  <p className="text-red-600 mt-1 text-sm">{form.formState.errors.expiresInHours.message}</p>
-                )}
-              </div>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                {isSubmitting ? (
-                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                ) : (
-                  <><Store className="h-4 w-4 mr-2" /> Create Store</>
-                )}
-              </Button>
-            </form>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || nameMessage !== 'Name is unique'}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  ) : (
+                    <><Store className="h-4 w-4 mr-2" /> Create Store</>
+                  )}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
         </Card>
       </div>

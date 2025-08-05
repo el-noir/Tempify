@@ -19,6 +19,7 @@ import {
   TrendingUp,
   DollarSign,
   ShoppingCart,
+  Link,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -136,6 +137,10 @@ function Dashboard() {
   useEffect(() => {
     console.log("Dashboard - Session status:", status)
     console.log("Dashboard - Session data:", session)
+
+
+
+
   }, [session, status])
 
   // Show loading while session is loading
@@ -416,7 +421,7 @@ function Dashboard() {
                     </SidebarMenuItem>
                   ))}
                   <SidebarMenuItem>
-                    <SidebarMenuButton>
+                      <SidebarMenuButton onClick={() => router.push('/dashboard/add-store')}>
                       <Plus className="h-4 w-4" />
                       <span>Add Store</span>
                     </SidebarMenuButton>

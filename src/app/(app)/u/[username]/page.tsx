@@ -33,7 +33,7 @@ function Profile() {
       <div className="flex justify-center items-center min-h-screen bg-slate-50">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-indigo-600" />
-          <p className="text-slate-600">Loading dashboard...</p>
+          <p className="text-slate-600">Loading</p>
         </div>
       </div>
     )

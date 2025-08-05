@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { Loader2, Store } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { z } from 'zod'
 import { createStoreSchema } from '@/lib/validations'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import axios, { AxiosError } from 'axios'
 
@@ -22,13 +21,13 @@ interface StorePlan {
   _id: string
   title: string
   durationHours: number
-  finalPrice: number
-  discountPercentage?: number
+  commissionPercentage: number
 }
 
 interface ApiResponse<T> {
   success: boolean
   message: string
+  plans?: T
   store?: T
   errors?: Record<string, string[]>
 }
@@ -57,7 +56,7 @@ const AddStore = () => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await axios.get<ApiResponse<StorePlan[]>>('/api/plans')
+        const response = await axios.get<ApiResponse<StorePlan[]>>('/api/store-plans/get')
         if (response.data.success) {
           setPlans(response.data.plans || [])
         } else {
@@ -75,9 +74,10 @@ const AddStore = () => {
     setIsSubmitting(true)
     try {
       const response = await axios.post<ApiResponse<{ _id: string; name: string; slug: string; expiresAt: string }>>(
-        '/api/stores',
+        '/api/store/create',
         data
       )
+      console.log(response)
       if (response.data.success) {
         toast.success(response.data.message || 'Store created successfully!')
         router.push(`/stores/${response.data.store?.slug}`)
@@ -159,20 +159,10 @@ const AddStore = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-slate-900">{plan.title}</h3>
                       <p className="text-sm text-slate-600">{plan.durationHours} hours duration</p>
-                      <p className="text-lg font-bold text-indigo-600 mt-1">
-                        ${plan.finalPrice}
-                        {plan.discountPercentage ? (
-                          <span className="text-sm text-slate-500 line-through ml-2">
-                            ${(plan.finalPrice / (1 - (plan.discountPercentage / 100))).toFixed(2)}
-                          </span>
-                        ) : null}
+                      <p className="text-sm text-slate-600 mt-1">
+                        {plan.commissionPercentage}% commission
                       </p>
                     </div>
-                    {plan.discountPercentage ? (
-                      <Badge className="bg-indigo-600 text-white">
-                        {plan.discountPercentage}% OFF
-                      </Badge>
-                    ) : null}
                   </div>
                 </motion.div>
               ))}

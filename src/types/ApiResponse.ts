@@ -1,6 +1,6 @@
-export interface ApiResponse {
-    success: boolean;
-    message: string;
-    isAcceptingMessage?: boolean;
-    isActive?: boolean
+export interface ApiResponse<T> {
+  success: boolean
+  message: string
+  store?: T
+  errors?: Record<string, string[]>
 }

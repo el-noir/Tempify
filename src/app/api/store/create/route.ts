@@ -37,7 +37,7 @@ try {
       );
         }
     
-const {name, description, planId, expiresInHours} = parseResult.data;
+const {name, description, planId} = parseResult.data;
     
     // check if plan exist in db
     const plan = await StorePlanModel.findById(planId)
@@ -67,6 +67,8 @@ const {name, description, planId, expiresInHours} = parseResult.data;
             description,
             expiresAt
         })
+
+        newStore.save()
 
     // return response of success
     return NextResponse.json({

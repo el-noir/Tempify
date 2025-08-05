@@ -6,10 +6,10 @@ export async function POST(req: Request) {
   await dbConnect()
 
   try {
-    const { title, durationHours, basePrice, discountPercentage = 0 } =
+    const { title, durationHours, basePrice, commissionPercentage } =
       await req.json()
 
-    if (!title || !durationHours || !basePrice) {
+    if (!title || !durationHours || !basePrice || commissionPercentage==null) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
@@ -17,14 +17,14 @@ export async function POST(req: Request) {
     }
 
     const finalPrice = Math.floor(
-      basePrice - (basePrice * discountPercentage) / 100
+      basePrice - (basePrice * commissionPercentage) / 100
     )
 
     const plan = new StorePlanModel({
       title,
       durationHours,
       basePrice,
-      discountPercentage,
+      commissionPercentage,
       finalPrice,
     })
 

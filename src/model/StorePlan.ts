@@ -6,6 +6,7 @@ export interface StorePlan extends Document {
   basePrice: number
   discountPercentage?: number
   finalPrice: number
+  commissionPercentage: number
 }
 
 const StorePlanSchema: Schema<StorePlan> = new Schema(
@@ -15,6 +16,7 @@ const StorePlanSchema: Schema<StorePlan> = new Schema(
     basePrice: { type: Number, required: true },
     discountPercentage: { type: Number, default: 0 }, // ✅ fixed field name
     finalPrice: { type: Number, required: true },
+     commissionPercentage: { type: Number, required: true }, 
   },
   { timestamps: true }
 )

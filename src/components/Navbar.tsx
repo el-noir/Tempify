@@ -4,7 +4,7 @@ import { useSession, signOut } from "next-auth/react"
 import type { User } from "next-auth"
 import { Button } from "./ui/button"
 import { LogOut, UserIcon, Home } from "lucide-react"
-
+import { useRouter } from "next/navigation"
 const Navbar = () => {
   const { data: session } = useSession()
   const user: User = session?.user
@@ -26,22 +26,27 @@ const Navbar = () => {
             {session ? (
               <>
                 {/* User Info */}
-                <div className="hidden md:flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                    <UserIcon className="w-4 h-4 text-indigo-600" />
-                  </div>
-                  <div className="text-sm">
-                    <p className="text-slate-900 font-medium">Welcome, {user?.username || user?.email}</p>
-                  </div>
-                </div>
+<Link
+  href={`/u/${user?.username || ""}`}
+  className="hidden md:flex items-center space-x-3 hover:underline"
+>
+  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+    <UserIcon className="w-4 h-4 text-indigo-600" />
+  </div>
+  <div className="text-sm">
+    <p className="text-slate-900 font-medium">
+      Welcome, {user?.username || user?.email}
+    </p>
+  </div>
+</Link>
 
                 {/* Mobile User Info */}
-                <div className="md:hidden">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                    <UserIcon className="w-4 h-4 text-indigo-600" />
-                  </div>
+                  <Link href={`/u/${user?.username || ""}`} className="md:hidden">
+                <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+               <UserIcon className="w-4 h-4 text-indigo-600" />
                 </div>
-
+                </Link>
+              
                 {/* Logout Button */}
                 <Button
                   onClick={() => signOut()}

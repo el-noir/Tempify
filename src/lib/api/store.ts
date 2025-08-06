@@ -56,6 +56,26 @@ export const createProduct = async (storeId: string, productData: {
   }
 }
 
+export const createStore = async (storeData: {
+  name: string
+  description?: string
+  slug: string
+}) => {
+  try {
+    const res = await fetch('/api/store/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(storeData),
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error('Error creating store:', err);
+    return null;
+  }
+}
+
 export const updateProduct = async (productId: string, productData: {
   name?: string
   description?: string

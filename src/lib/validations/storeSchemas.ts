@@ -10,7 +10,7 @@ export const createStoreSchema = z.object({
 export const titleValidation = z.string()
                                 .min(3, "Store name is too short")
                                 .max(50)
-                                .regex(/^[a-zA-Z0-9_]+$/, "Name must not contain special character")
+                                .regex(/^[a-zA-Z0-9_ ]+$/, "Name must not contain special character")
 
 export const feedbackSchema = z.object({
   message: z.string().min(10, "Message too short"),

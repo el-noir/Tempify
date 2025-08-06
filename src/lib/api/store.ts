@@ -1,22 +1,35 @@
 'use client'
 
-import axios from 'axios'
-
 export const fetchUserStores = async () => {
   try {
     const res = await fetch('/api/store/my-stores', {
       method: 'GET',
       credentials: 'include',
     });
-
     if (!res.ok) {
       throw new Error(`Error: ${res.statusText}`);
     }
-
     const data = await res.json();
     return data.stores || [];
   } catch (err) {
     console.error('Error fetching user stores:', err);
+    return [];
+  }
+}
+
+export const fetchStoreProducts = async (storeId: string) => {
+  try {
+    const res = await fetch(`/api/store/${storeId}/products`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`Error: ${res.statusText}`);
+    }
+    const data = await res.json();
+    return data.products || [];
+  } catch (err) {
+    console.error('Error fetching store products:', err);
     return [];
   }
 }
@@ -29,7 +42,6 @@ export async function updateStore(id: string, payload: { name?: string; descript
       credentials: 'include',
       body: JSON.stringify(payload),
     });
-
     const data = await res.json();
     return data;
   } catch (err) {
@@ -44,7 +56,6 @@ export async function softDeleteStore(id: string) {
       method: 'DELETE',
       credentials: 'include',
     });
-
     const data = await res.json();
     return data;
   } catch (err) {

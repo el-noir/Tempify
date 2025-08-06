@@ -172,9 +172,12 @@ function Dashboard() {
             onEditStore={handleEditStore}
             onDeleteStore={handleDeleteStore}
           />
+          {/* Only show ProductTable when no specific store is selected */}
           <ProductTable 
             products={getAllProducts()}
             stores={stores}
+            title="All Products"
+            description="Manage your products across all stores"
           />
         </div>
       )
@@ -188,6 +191,7 @@ function Dashboard() {
       return (
         <div className="space-y-6">
           <DashboardStats stores={stores.filter(s => s.id === selectedStore)} />
+          {/* Don't show StoreTable when a specific store is active */}
           {isLoadingProducts ? (
             <div className="flex justify-center items-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />

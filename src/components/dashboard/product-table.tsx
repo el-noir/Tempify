@@ -2,14 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Eye, Package } from 'lucide-react'
+import { Search, Plus, Package } from 'lucide-react'
 import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { ProductActions } from "./product-actions"
 
 interface Product {
   id: string
@@ -65,13 +65,10 @@ export function ProductTable({
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </div>
-          <Button 
-            onClick={() => router.push('/dashboard/add-product')}
-            className="bg-indigo-600 hover:bg-indigo-700"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Button>
+          <ProductActions 
+            storeId={selectedStore || undefined}
+            onProductUpdate={() => window.location.reload()}
+          />
         </div>
       </CardHeader>
       <CardContent>
@@ -137,27 +134,10 @@ export function ProductTable({
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <ProductActions 
+                          product={product} 
+                          onProductUpdate={() => window.location.reload()} // You can make this more elegant with proper state management
+                        />
                       </TableCell>
                     </TableRow>
                   )

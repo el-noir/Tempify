@@ -12,10 +12,17 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface Store {
   id: string
+  ownerId: string
+  planId: string
   name: string
+  slug: string
   description?: string
-  isActive: boolean
   products?: any[]
+  isActive: boolean
+  extendedHours?: number
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
 }
 
 interface StoreTableProps {

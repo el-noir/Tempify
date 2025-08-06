@@ -109,7 +109,9 @@ const AddStore = () => {
       )
       if (response.data.success) {
         toast.success(response.data.message || 'Store created successfully!')
-        router.push(`/stores/${response.data.store?.slug}`)
+        console.log("Store Slug: ", response.data.store?.slug)
+        // router.push(`/stores/${response.data.store?.slug}`)
+        router.push(`/dashboard`);
       } else {
         toast.error(response.data.message || 'Failed to create store')
       }

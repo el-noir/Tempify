@@ -109,7 +109,7 @@ export function ProductTable({
                     <TableRow key={product.id}>
                       <TableCell>
                         <Image
-                          src={product.imageUrl || "/placeholder.svg"}
+                          src=""
                           alt={product.name || "Product image"}
                           width={64}
                           height={64}

@@ -9,17 +9,17 @@ import StoreModel from "@/model/Store";
 import { success } from "zod";
 import { updateProductSchema } from "@/lib/validations";
 
-export async function GET(_: Request, { params }: { params: { id: string } }){
-  const { id } = params;
+export async function GET(_: Request, { params }: { params: { productId: string } }){
+  const { productId } = params;
 
   try {
     await dbConnect();
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
       return NextResponse.json({ success: false, message: "Invalid product ID" }, { status: 400 });
     }
 
-    const product = await ProductModel.findById(id).populate('storeId');
+    const product = await ProductModel.findById(productId).populate('storeId');
 
     const store = product?.storeId as Store
 
@@ -44,9 +44,9 @@ export async function GET(_: Request, { params }: { params: { id: string } }){
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }){
+export async function PATCH(request: Request, { params }: { params: { productId: string } }){
     const session = await getServerSession(authOptions)
-    const {id} = params
+    const {productId} = params
 
    if (!session?.user?._id) {
     return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
@@ -54,7 +54,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
    try{
     await dbConnect()
-    const product = await ProductModel.findById(id).populate('storeId');
+    const product = await ProductModel.findById(productId).populate('storeId');
     const store = product?.storeId as Store
 
     if (!product || !store?.isActive) {
@@ -92,19 +92,19 @@ export async function PATCH(request: Request, { params }: { params: { id: string
    }
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, { params }: { params: { productId: string } }) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?._id) {
     return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id } = params;
+  const { productId } = params;
 
   try {
     await dbConnect();
 
-    const product = await ProductModel.findById(id).populate('storeId');
+    const product = await ProductModel.findById(productId).populate('storeId');
 
     if (!product) {
       return NextResponse.json({ success: false, message: "Product not found" }, { status: 404 });
@@ -122,7 +122,7 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
 
     const productId = product._id as mongoose.Types.ObjectId;
 
-    await ProductModel.findByIdAndDelete(id);
+    await ProductModel.findByIdAndDelete(productId);
 
     store.products = store.products.filter(
       (prodId) => prodId.toString() !== productId.toString()

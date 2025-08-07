@@ -4,10 +4,12 @@ import mongoose from 'mongoose'
 import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/connection/dbConnect";
 import StoreModel from "@/model/Store";
+import ProductModel from "@/model/Product";
 import {updateSchema} from '@/lib/validations'
-import {z} from 'zod'
+import {success, z} from 'zod'
 
-export async function GET(req: NextRequest, {params}: {params: {id: string}}){
+export async function GET(  req: NextRequest,
+  context: { params: { storeId: string } }){
     const session = await getServerSession(authOptions)
 
     if(!session || !session.user){
@@ -46,7 +48,8 @@ export async function GET(req: NextRequest, {params}: {params: {id: string}}){
 
 
 
-export async function PATCH(req: NextRequest, { params }: { params: { storeId: string } }) {
+export async function PATCH(  req: NextRequest,
+  context: { params: { storeId: string } }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json(
@@ -117,34 +120,36 @@ export async function PATCH(req: NextRequest, { params }: { params: { storeId: s
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { storeId: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { storeId: string } }
+) {
   const session = await getServerSession(authOptions);
+
   if (!session?.user) {
-    return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
   }
 
-  console.log("Deleting store with ID:", params.storeId);
+  const { storeId } = context.params;
+  console.log("Deleting store with ID:", storeId);
 
   try {
     await dbConnect();
-    
-    // Validate ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(params.storeId)) {
-      return NextResponse.json(
-        { success: false, message: "Invalid store ID format" },
-        { status: 400 }
-      );
+
+    if (!mongoose.Types.ObjectId.isValid(storeId)) {
+      return NextResponse.json({
+        success: false,
+        message: "Invalid store ID format",
+      }, { status: 400 });
     }
-    
-    const store = await StoreModel.findById(params.storeId);
+
+    const store = await StoreModel.findById(storeId);
+
     if (!store) {
-      return NextResponse.json(
-        { success: false, message: "Store not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: "Store not found",
+      }, { status: 404 });
     }
 
     if (store.ownerId.toString() !== session.user._id) {
@@ -154,18 +159,21 @@ export async function DELETE(req: NextRequest, { params }: { params: { storeId: 
       );
     }
 
-    // Soft delete - set isActive to false
-    store.isActive = false;
-    await store.save();
+    // 1. Delete all products belonging to the store
+    await ProductModel.deleteMany({ storeId: store._id });
+
+    // 2. Delete the store itself
+    await store.deleteOne(); // or StoreModel.findByIdAndDelete(storeId)
 
     return NextResponse.json(
-      { success: true, message: "Store deleted (soft)" },
+      { success: true, message: "Store and associated products deleted successfully" },
       { status: 200 }
     );
+
   } catch (error) {
-    console.error("Store deletion error:", error);
+    console.error("Error deleting store and products:", error);
     return NextResponse.json(
-      { success: false, message: "Something went wrong" },
+      { success: false, message: "Internal server error" },
       { status: 500 }
     );
   }

@@ -6,7 +6,7 @@ export interface Store extends Document {
   name: string
   slug: string
   description?: string
-  products?: Types.ObjectId[]
+  products: Types.ObjectId[]
   isActive: boolean
   extendedHours?: number
   expiresAt: Date

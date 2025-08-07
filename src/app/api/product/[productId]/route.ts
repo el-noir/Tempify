@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/connection/dbConnect";
 import ProductModel from "@/model/Product";
 import type {Store} from '@/model/Store'
@@ -6,11 +6,18 @@ import { getServerSession } from "next-auth";
 import mongoose, { mongo } from 'mongoose'
 import { authOptions } from "../../auth/[...nextauth]/options";
 import StoreModel from "@/model/Store";
-import { success } from "zod";
-import { updateProductSchema } from "@/lib/validations";
+import { updateProductSchema } from "@/lib/validations/updateProductSchema";
 
-export async function GET(_: Request, { params }: { params: { productId: string } }){
-  const { productId } = params;
+export async function GET(
+  req: NextRequest,
+  context: { params: { productId: string } }
+) {
+  const session = await getServerSession(authOptions);
+  const { productId } = context.params;
+
+  if (!session?.user?._id) {
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+  }
 
   try {
     await dbConnect();
@@ -20,11 +27,14 @@ export async function GET(_: Request, { params }: { params: { productId: string 
     }
 
     const product = await ProductModel.findById(productId).populate('storeId');
-
-    const store = product?.storeId as Store
+    const store = product?.storeId as Store;
 
     if (!product || !store?.isActive) {
       return NextResponse.json({ success: false, message: "Product or store not found or inactive" }, { status: 403 });
+    }
+
+    if (store.ownerId.toString() !== session.user._id) {
+      return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
     }
 
     return NextResponse.json({
@@ -35,6 +45,7 @@ export async function GET(_: Request, { params }: { params: { productId: string 
         slug: store.slug
       }
     });
+
   } catch (error) {
     console.error("Error fetching product:", error);
     return NextResponse.json(
@@ -44,9 +55,12 @@ export async function GET(_: Request, { params }: { params: { productId: string 
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { productId: string } }){
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { productId: string } }
+){
     const session = await getServerSession(authOptions)
-    const {productId} = params
+    const {productId} = context.params
 
    if (!session?.user?._id) {
     return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
@@ -65,7 +79,7 @@ export async function PATCH(request: Request, { params }: { params: { productId:
         return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 })  
     }
 
-    const body = await request.json()
+    const body = await req.json()
     const parsed = updateProductSchema.safeParse(body);
 
     if(!parsed.success){
@@ -92,14 +106,16 @@ export async function PATCH(request: Request, { params }: { params: { productId:
    }
 }
 
-export async function DELETE(_: Request, { params }: { params: { productId: string } }) {
+export async function DELETE(  req: NextRequest,
+  context: { params: { productId: string } }
+) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?._id) {
     return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
   }
 
-  const { productId } = params;
+  const { productId } = context.params;
 
   try {
     await dbConnect();
@@ -120,12 +136,12 @@ export async function DELETE(_: Request, { params }: { params: { productId: stri
       return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
     }
 
-    const productId = product._id as mongoose.Types.ObjectId;
+    const mongoProductId = product._id as mongoose.Types.ObjectId;
 
-    await ProductModel.findByIdAndDelete(productId);
+    await ProductModel.findByIdAndDelete(mongoProductId);
 
     store.products = store.products.filter(
-      (prodId) => prodId.toString() !== productId.toString()
+      (prodId) => prodId.toString() !== mongoProductId.toString()
     );
     await store.save();
 

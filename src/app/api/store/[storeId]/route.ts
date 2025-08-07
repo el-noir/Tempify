@@ -46,7 +46,7 @@ export async function GET(req: NextRequest, {params}: {params: {id: string}}){
 
 
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: { storeId: string } }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json(
@@ -69,14 +69,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     await dbConnect()
     
     // Validate ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(params.storeId)) {
       return NextResponse.json(
         { success: false, message: "Invalid store ID format" },
         { status: 400 }
       );
     }
 
-    const store = await StoreModel.findById(params.id);
+    const store = await StoreModel.findById(params.storeId);
     if (!store) {
       return NextResponse.json(
         { success: false, message: "Store not found" },
@@ -117,7 +117,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { storeId: string } }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json(
@@ -126,20 +126,20 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     );
   }
 
-  console.log("Deleting store with ID:", params.id);
+  console.log("Deleting store with ID:", params.storeId);
 
   try {
     await dbConnect();
     
     // Validate ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    if (!mongoose.Types.ObjectId.isValid(params.storeId)) {
       return NextResponse.json(
         { success: false, message: "Invalid store ID format" },
         { status: 400 }
       );
     }
     
-    const store = await StoreModel.findById(params.id);
+    const store = await StoreModel.findById(params.storeId);
     if (!store) {
       return NextResponse.json(
         { success: false, message: "Store not found" },

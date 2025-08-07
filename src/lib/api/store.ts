@@ -134,7 +134,7 @@ export const fetchProduct = async (productId: string) => {
 export async function updateStore(id: string, payload: { name?: string; description?: string }) {
   try {
     console.log('Updating store with ID:', id);
-    const res = await fetch(`/api/store/my-stores/${id}`, {
+    const res = await fetch(`/api/store/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -152,7 +152,7 @@ export async function updateStore(id: string, payload: { name?: string; descript
 export async function softDeleteStore(id: string) {
   try {
     console.log('Deleting store with ID:', id);
-    const res = await fetch(`/api/store/my-stores/${id}`, {
+    const res = await fetch(`/api/store/${id}`, {
       method: 'DELETE',
       credentials: 'include',
     });

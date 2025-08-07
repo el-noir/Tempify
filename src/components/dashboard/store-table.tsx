@@ -9,21 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
-interface Store {
-  id: string
-  ownerId: string
-  planId: string
-  name: string
-  slug: string
-  description?: string
-  products?: any[]
-  isActive: boolean
-  extendedHours?: number
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
-}
+import type { Store } from '@/types/Store'
 
 interface StoreTableProps {
   stores: Store[]
@@ -88,7 +74,9 @@ export function StoreTable({ stores, onEditStore, onDeleteStore }: StoreTablePro
                       {store.isActive ? "active" : "inactive"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{store.products?.length || 0}</TableCell>
+                  <TableCell>
+                    {Array.isArray(store.products) ? store.products.length : 0}
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

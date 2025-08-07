@@ -1,6 +1,8 @@
 'use client'
 
-export const fetchUserStores = async () => {
+import type { Store, Product } from '@/types/Store'
+
+export const fetchUserStores = async (): Promise<Store[]> => {
   try {
     const res = await fetch('/api/store/my-stores', {
       method: 'GET',
@@ -17,7 +19,7 @@ export const fetchUserStores = async () => {
   }
 }
 
-export const fetchStoreProducts = async (storeId: string) => {
+export const fetchStoreProducts = async (storeId: string): Promise<Product[]> => {
   try {
     const res = await fetch(`/api/store/${storeId}/products`, {
       method: 'GET',
@@ -131,6 +133,7 @@ export const fetchProduct = async (productId: string) => {
 
 export async function updateStore(id: string, payload: { name?: string; description?: string }) {
   try {
+    console.log('Updating store with ID:', id);
     const res = await fetch(`/api/store/my-stores/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -138,6 +141,7 @@ export async function updateStore(id: string, payload: { name?: string; descript
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    console.log('Update response:', data);
     return data;
   } catch (err) {
     console.error('Error updating store:', err);
@@ -147,11 +151,13 @@ export async function updateStore(id: string, payload: { name?: string; descript
 
 export async function softDeleteStore(id: string) {
   try {
+    console.log('Deleting store with ID:', id);
     const res = await fetch(`/api/store/my-stores/${id}`, {
       method: 'DELETE',
       credentials: 'include',
     });
     const data = await res.json();
+    console.log('Delete response:', data);
     return data;
   } catch (err) {
     console.error('Error deleting store:', err);

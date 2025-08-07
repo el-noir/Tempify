@@ -1,5 +1,6 @@
 import mongoose, {Connection} from "mongoose";
-
+import '@/model/StorePlan'
+import '@/model/Store'
 type ConnectionObject = {
     isConnected?: number
 }

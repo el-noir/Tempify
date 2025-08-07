@@ -6,7 +6,7 @@ export interface Store extends Document {
   name: string
   slug: string
   description?: string
-  products: Types.ObjectId[]
+  products?: Types.ObjectId[]
   isActive: boolean
   extendedHours?: number
   expiresAt: Date
@@ -69,7 +69,6 @@ StoreSchema.virtual('calculatedExpiresAt').get(function (this: Store) {
   const totalHours = plan.durationHours + (this.extendedHours || 0)
   return new Date(this.createdAt.getTime() + totalHours * 60 * 60 * 1000)
 })
-
 
 const StoreModel =
   mongoose.models.Store || mongoose.model<Store>('Store', StoreSchema)

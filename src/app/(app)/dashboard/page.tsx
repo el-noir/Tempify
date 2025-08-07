@@ -19,35 +19,7 @@ import { StoreTable } from "@/components/dashboard/store-table"
 import { ProductTable } from "@/components/dashboard/product-table"
 import { ProfileSection } from "@/components/dashboard/profile-section"
 import { EditStoreDialog } from "@/components/dashboard/edit-store-dialog"
-
-// Define Product type
-interface Product {
-  id: string
-  storeId: string
-  name: string
-  description?: string
-  price: number
-  imageUrl?: string
-  quantityAvailable?: number
-  createdAt: string
-  updatedAt: string
-}
-
-// Define Store type
-interface Store {
-  id: string
-  ownerId: string
-  planId: string
-  name: string
-  slug: string
-  description?: string
-  products: Product[]
-  isActive: boolean
-  extendedHours?: number
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
-}
+import type { Store, Product } from '@/types/Store'
 
 function Dashboard() {
   const { data: session, status } = useSession({
@@ -72,7 +44,8 @@ function Dashboard() {
       const loadStores = async () => {
         setIsLoading(true)
         const fetchedStores = await fetchUserStores()
-        setStores(fetchedStores || [])
+        console.log('Fetched stores:', fetchedStores)
+        setStores(fetchedStores)
         setIsLoading(false)
       }
       loadStores()
@@ -104,17 +77,19 @@ function Dashboard() {
       description: description || undefined,
     }
 
+    console.log('Updating store:', editStore.id, payload)
     const result = await updateStore(editStore.id, payload)
     if (result?.success) {
       setStores(stores.map(s => s.id === editStore.id ? { ...s, ...payload } : s))
       setEditStore(null)
       toast.success("Store updated successfully!")
     } else {
-      toast.error("Failed to update store")
+      toast.error(result?.message || "Failed to update store")
     }
   }
 
   const handleDeleteStore = async (id: string) => {
+    console.log('Deleting store:', id)
     const result = await softDeleteStore(id)
     if (result?.success) {
       setStores(stores.filter(s => s.id !== id))
@@ -124,16 +99,21 @@ function Dashboard() {
       }
       toast.success("Store deleted successfully!")
     } else {
-      toast.error("Failed to delete store")
+      toast.error(result?.message || "Failed to delete store")
     }
   }
 
-  const getAllProducts = () => {
-    return stores.flatMap(store => store.products || [])
+  const getAllProducts = (): Product[] => {
+    return stores.flatMap(store => 
+      Array.isArray(store.products) 
+        ? store.products.filter((p): p is Product => typeof p === 'object' && 'id' in p)
+        : []
+    )
   }
 
   const getSelectedStoreName = () => {
-    return stores.find(store => store.id === selectedStore)?.name || "Store"
+    const store = stores.find(store => store.id === selectedStore)
+    return store?.name || "Store"
   }
 
   if (status === "loading" || isLoading) {
@@ -172,7 +152,6 @@ function Dashboard() {
             onEditStore={handleEditStore}
             onDeleteStore={handleDeleteStore}
           />
-          {/* Only show ProductTable when no specific store is selected */}
           <ProductTable 
             products={getAllProducts()}
             stores={stores}
@@ -191,7 +170,6 @@ function Dashboard() {
       return (
         <div className="space-y-6">
           <DashboardStats stores={stores.filter(s => s.id === selectedStore)} />
-          {/* Don't show StoreTable when a specific store is active */}
           {isLoadingProducts ? (
             <div className="flex justify-center items-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />

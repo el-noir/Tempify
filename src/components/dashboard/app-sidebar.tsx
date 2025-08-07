@@ -15,13 +15,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
-
-interface Store {
-  id: string
-  name: string
-  products?: any[]
-  isActive: boolean
-}
+import type { Store as StoreType } from '@/types/Store'
 
 interface AppSidebarProps {
   username: string
@@ -29,7 +23,7 @@ interface AppSidebarProps {
   setActiveView: (view: string) => void
   selectedStore: string | null
   setSelectedStore: (storeId: string | null) => void
-  stores: Store[]
+  stores: StoreType[]
 }
 
 export function AppSidebar({
@@ -42,9 +36,10 @@ export function AppSidebar({
 }: AppSidebarProps) {
   const router = useRouter()
 
-  const handleStoreClick = (storeId: string) => {
-    setSelectedStore(storeId)
-    setActiveView("store") // Set view to store when a store is selected
+  const handleStoreClick = (store: StoreType) => {
+    // Use the id field which is guaranteed to be a string
+    setSelectedStore(store.id)
+    setActiveView("store")
   }
 
   return (
@@ -95,13 +90,13 @@ export function AppSidebar({
               {stores.map((store) => (
                 <SidebarMenuItem key={store.id}>
                   <SidebarMenuButton
-                    onClick={() => handleStoreClick(store.id)}
+                    onClick={() => handleStoreClick(store)}
                     isActive={selectedStore === store.id && activeView === "store"}
                   >
                     <Store className="h-4 w-4" />
                     <span>{store.name}</span>
                     <Badge variant="secondary" className="ml-auto">
-                      {store.products?.length || 0}
+                      {Array.isArray(store.products) ? store.products.length : 0}
                     </Badge>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

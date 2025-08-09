@@ -26,19 +26,21 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+      <Card className="w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <ShoppingCart className="w-5 h-5" />
-            Shopping Cart ({state.itemCount})
+            <span className="hidden sm:inline">Shopping Cart</span>
+            <span className="sm:hidden">Cart</span>
+            <span className="text-sm text-slate-500">({state.itemCount})</span>
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="w-4 h-4" />
           </Button>
         </CardHeader>
         
-        <CardContent className="overflow-y-auto max-h-[60vh]">
+        <CardContent className="overflow-y-auto max-h-[50vh] sm:max-h-[60vh] px-4 sm:px-6">
           {state.items.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingCart className="w-12 h-12 text-slate-300 mx-auto mb-4" />
@@ -50,7 +52,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           ) : (
             <div className="space-y-4">
               {state.items.map((item) => (
-                <div key={item.product.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                <div key={item.product.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
                   <div className="w-16 h-16 flex-shrink-0">
                     {item.product.imageUrl ? (
                       <img
@@ -65,46 +67,50 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                     )}
                   </div>
                   
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-slate-900 truncate">{item.product.name}</h4>
-                    {item.product.storeName && (
-                      <p className="text-sm text-slate-500">by {item.product.storeName}</p>
-                    )}
-                    <p className="text-lg font-bold text-slate-900">
-                      ${(item.product.price * item.quantity).toFixed(2)}
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                    >
-                      <Minus className="w-3 h-3" />
-                    </Button>
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => updateQuantity(item.product.id, parseInt(e.target.value) || 0)}
-                      className="w-16 text-center"
-                      min="1"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                    >
-                      <Plus className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeItem(item.product.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-slate-900 truncate text-sm sm:text-base">{item.product.name}</h4>
+                      {item.product.storeName && (
+                        <p className="text-xs sm:text-sm text-slate-500">by {item.product.storeName}</p>
+                      )}
+                      <p className="text-base sm:text-lg font-bold text-slate-900">
+                        ${(item.product.price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="w-8 h-8 p-0"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <Input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => updateQuantity(item.product.id, parseInt(e.target.value) || 0)}
+                        className="w-12 sm:w-16 text-center text-sm"
+                        min="1"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        className="w-8 h-8 p-0"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeItem(item.product.id)}
+                        className="text-red-500 hover:text-red-700 w-8 h-8 p-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -113,15 +119,15 @@ export default function Cart({ isOpen, onClose }: CartProps) {
         </CardContent>
         
         {state.items.length > 0 && (
-          <div className="border-t p-4">
+          <div className="border-t p-4 sm:p-6">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-lg font-semibold">Total:</span>
-              <span className="text-2xl font-bold text-slate-900">
+              <span className="text-base sm:text-lg font-semibold">Total:</span>
+              <span className="text-xl sm:text-2xl font-bold text-slate-900">
                 ${state.total.toFixed(2)}
               </span>
             </div>
             
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 variant="outline"
                 onClick={clearCart}

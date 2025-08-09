@@ -144,11 +144,11 @@ export default function StoresPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="space-y-6">
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-4 w-2/3" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <Skeleton key={i} className="h-48" />
               ))}
@@ -161,7 +161,7 @@ export default function StoresPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Stores</h2>
@@ -181,11 +181,11 @@ export default function StoresPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Discover Stores</h1>
-          <p className="text-slate-600">Find amazing products from our community of sellers</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Discover Stores</h1>
+          <p className="text-slate-600 text-sm sm:text-base">Find amazing products from our community of sellers</p>
         </div>
 
         {/* Search and Filter Bar */}
@@ -210,7 +210,7 @@ export default function StoresPage() {
 
         {/* Stores Count */}
         <div className="mb-4">
-          <p className="text-slate-600">
+          <p className="text-slate-600 text-sm sm:text-base">
             Showing {stores.length} of {pagination.totalCount} stores
           </p>
         </div>
@@ -218,14 +218,14 @@ export default function StoresPage() {
         {/* Stores Grid */}
         {stores.length === 0 ? (
           <Card>
-            <CardContent className="p-8 text-center">
+            <CardContent className="p-6 sm:p-8 text-center">
               <Store className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-600 text-lg mb-2">No stores found</p>
-              <p className="text-slate-500">Try adjusting your search criteria</p>
+              <p className="text-slate-600 text-base sm:text-lg mb-2">No stores found</p>
+              <p className="text-slate-500 text-sm sm:text-base">Try adjusting your search criteria</p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {stores.map((store) => (
               <StoreCard key={store.id} store={store} onClick={() => handleStoreClick(store)} />
             ))}
@@ -237,7 +237,7 @@ export default function StoresPage() {
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           onPageChange={goToPage}
-          className="mt-8"
+          className="mt-6 sm:mt-8"
         />
       </div>
     </div>
@@ -272,15 +272,15 @@ function StoreCard({ store, onClick }: StoreCardProps) {
       className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
       onClick={onClick}
     >
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors truncate">
               {store.name}
             </h3>
             <p className="text-slate-600 text-sm">by @{store.owner.username}</p>
           </div>
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs flex-shrink-0 ml-2">
             {store.plan.title}
           </Badge>
         </div>
@@ -291,18 +291,18 @@ function StoreCard({ store, onClick }: StoreCardProps) {
           </p>
         )}
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
             <Package className="w-4 h-4" />
             <span>{store.productCount} products</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
             <DollarSign className="w-4 h-4" />
             <span>{formatCurrency(store.totalValue)}</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500 gap-1 sm:gap-0">
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
             <span>Created {formatDate(store.createdAt)}</span>

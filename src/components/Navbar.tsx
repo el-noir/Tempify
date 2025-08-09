@@ -35,7 +35,7 @@ const Navbar = () => {
           </div>
 
           {/* Cart and Auth Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Cart Button */}
             <Button
               variant="outline"
@@ -43,8 +43,8 @@ const Navbar = () => {
               onClick={() => setIsCartOpen(true)}
               className="relative"
             >
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Cart
+              <ShoppingCart className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Cart</span>
               {state.itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {state.itemCount}
@@ -95,7 +95,7 @@ const Navbar = () => {
                   className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:text-indigo-800 bg-transparent"
                 >
                   <UserIcon className="w-4 h-4 mr-2" />
-                  Login
+                  <span className="hidden sm:inline">Login</span>
                 </Button>
               </Link>
             )}

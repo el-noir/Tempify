@@ -38,22 +38,22 @@ export default function ProductCard({
 
   if (viewMode === 'list') {
     return (
-      <Card className={`flex ${className}`}>
-        <div className="w-32 h-32 flex-shrink-0">
+      <Card className={`flex flex-col sm:flex-row ${className}`}>
+        <div className="w-full sm:w-32 h-32 flex-shrink-0">
           {product.imageUrl ? (
             <img
               src={product.imageUrl}
               alt={product.name}
-              className="w-full h-full object-cover rounded-l-lg"
+              className="w-full h-full object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-t-none"
             />
           ) : (
-            <div className="w-full h-full bg-slate-200 rounded-l-lg flex items-center justify-center">
+            <div className="w-full h-full bg-slate-200 rounded-t-lg sm:rounded-l-lg sm:rounded-t-none flex items-center justify-center">
               <span className="text-slate-400 text-sm">No image</span>
             </div>
           )}
         </div>
         <CardContent className="flex-1 p-4">
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-slate-900 mb-1">{product.name}</h3>
               {product.storeName && (
@@ -70,17 +70,18 @@ export default function ProductCard({
                 )}
               </div>
             </div>
-            <div className="text-right ml-4">
-              <p className="text-xl font-bold text-slate-900 mb-2">
+            <div className="flex flex-col sm:flex-col sm:text-right gap-3 sm:gap-2">
+              <p className="text-xl font-bold text-slate-900">
                 ${product.price.toFixed(2)}
               </p>
               {showActions && (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   {onViewDetails && (
                     <Button 
                       variant="outline" 
                       size="sm"
                       onClick={() => onViewDetails(product)}
+                      className="w-full sm:w-auto"
                     >
                       <Eye className="w-4 h-4 mr-1" />
                       View
@@ -91,6 +92,7 @@ export default function ProductCard({
                       size="sm"
                       onClick={() => onAddToCart(product)}
                       disabled={isOutOfStock}
+                      className="w-full sm:w-auto"
                     >
                       <ShoppingCart className="w-4 h-4 mr-1" />
                       Add to Cart
@@ -123,7 +125,7 @@ export default function ProductCard({
         {/* Overlay with actions */}
         {showActions && (onViewDetails || onAddToCart) && (
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               {onViewDetails && (
                 <Button 
                   variant="secondary" 

@@ -167,11 +167,11 @@ export default function PublicStorePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="space-y-6">
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-4 w-2/3" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} className="h-64" />
               ))}
@@ -184,7 +184,7 @@ export default function PublicStorePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-semibold text-red-600 mb-2">Store Not Found</h2>
@@ -204,20 +204,20 @@ export default function PublicStorePage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         {/* Store Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">{store.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">{store.name}</h1>
               <p className="text-slate-600 mt-1">by @{store.owner.username}</p>
             </div>
-            <Badge variant="secondary" className="text-sm">
+            <Badge variant="secondary" className="text-sm w-fit">
               {store.plan.title}
             </Badge>
           </div>
           {store.description && (
-            <p className="text-slate-700 text-lg">{store.description}</p>
+            <p className="text-slate-700 text-base sm:text-lg">{store.description}</p>
           )}
         </div>
 
@@ -241,7 +241,7 @@ export default function PublicStorePage() {
 
         {/* Products Count */}
         <div className="mb-4">
-          <p className="text-slate-600">
+          <p className="text-slate-600 text-sm sm:text-base">
             Showing {products.length} of {pagination.totalCount} products
           </p>
         </div>
@@ -249,14 +249,14 @@ export default function PublicStorePage() {
         {/* Products Grid/List */}
         {products.length === 0 ? (
           <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-slate-600 text-lg">No products found</p>
-              <p className="text-slate-500">Try adjusting your search or filters</p>
+            <CardContent className="p-6 sm:p-8 text-center">
+              <p className="text-slate-600 text-base sm:text-lg">No products found</p>
+              <p className="text-slate-500 text-sm sm:text-base">Try adjusting your search or filters</p>
             </CardContent>
           </Card>
         ) : (
           <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
             : "space-y-4"
           }>
             {products.map((product) => (
@@ -275,7 +275,7 @@ export default function PublicStorePage() {
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           onPageChange={goToPage}
-          className="mt-8"
+          className="mt-6 sm:mt-8"
         />
       </div>
     </div>

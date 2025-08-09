@@ -135,24 +135,24 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-12 sm:py-16">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
               Discover Amazing Products
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-indigo-100">
+            <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 text-indigo-100">
               Shop from thousands of unique stores and find exactly what you're looking for.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Link href="/stores">
-                <Button size="lg" variant="secondary" className="text-indigo-600 hover:text-indigo-700">
+                <Button size="lg" variant="secondary" className="text-indigo-600 hover:text-indigo-700 w-full sm:w-auto">
                   <Store className="w-5 h-5 mr-2" />
                   Browse Stores
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
               <Link href="/sign-in">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-indigo-600">
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-indigo-600 w-full sm:w-auto">
                   Create Your Store
                 </Button>
               </Link>
@@ -162,10 +162,10 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section className="py-8">
+      <section className="py-6 sm:py-8">
         <div className="container mx-auto px-4">
           {/* Search and Filter */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <SearchAndFilter
               search={searchParams.search}
               onSearchChange={handleSearchChange}
@@ -186,8 +186,8 @@ export default function Home() {
           </div>
 
           {/* Results Summary */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-slate-600">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <div className="text-slate-600 text-sm sm:text-base">
               {loading ? (
                 'Loading products...'
               ) : (
@@ -198,7 +198,7 @@ export default function Home() {
 
           {/* Products Grid/List */}
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <Card key={i} className="animate-pulse">
                   <div className="aspect-square bg-slate-200" />
@@ -212,7 +212,7 @@ export default function Home() {
             </div>
           ) : products.length > 0 ? (
             <div className={viewMode === 'grid' 
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
               : "space-y-4"
             }>
               {products.map((product) => (
@@ -227,10 +227,10 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">No products found</h3>
-              <p className="text-slate-600 mb-4">
+            <div className="text-center py-8 sm:py-12">
+              <Package className="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-2">No products found</h3>
+              <p className="text-slate-600 mb-4 text-sm sm:text-base">
                 Try adjusting your search criteria or browse our stores.
               </p>
               <Link href="/stores">
@@ -244,7 +244,7 @@ export default function Home() {
 
           {/* Pagination */}
           {!loading && pagination.totalPages > 1 && (
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
               <Pagination
                 currentPage={pagination.currentPage}
                 totalPages={pagination.totalPages}
@@ -256,24 +256,24 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-white">
+      <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4 text-center">
-          <Card className="max-w-2xl mx-auto p-8">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
+          <Card className="max-w-2xl mx-auto p-6 sm:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
               Want to Sell Your Products?
             </h2>
-            <p className="text-xl text-slate-600 mb-8">
+            <p className="text-lg sm:text-xl text-slate-600 mb-6 sm:mb-8">
               Create your own store and start selling to customers worldwide.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Link href="/sign-in">
-                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
+                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                   <Store className="w-4 h-4 mr-2" />
                   Create Your Store
                 </Button>
               </Link>
               <Link href="/stores">
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto">
                   Explore Stores
                 </Button>
               </Link>

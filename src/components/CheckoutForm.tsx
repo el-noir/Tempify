@@ -68,16 +68,16 @@ export default function CheckoutForm({ onClose }: CheckoutFormProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+      <Card className="w-full max-w-md max-h-[95vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <CreditCard className="w-5 h-5" />
             Checkout
           </CardTitle>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="customerName">Full Name *</Label>
@@ -89,6 +89,7 @@ export default function CheckoutForm({ onClose }: CheckoutFormProps) {
                 onChange={handleInputChange}
                 required
                 placeholder="Enter your full name"
+                className="mt-1"
               />
             </div>
 
@@ -102,6 +103,7 @@ export default function CheckoutForm({ onClose }: CheckoutFormProps) {
                 onChange={handleInputChange}
                 required
                 placeholder="Enter your email"
+                className="mt-1"
               />
             </div>
 
@@ -114,20 +116,21 @@ export default function CheckoutForm({ onClose }: CheckoutFormProps) {
                 value={formData.customerPhone}
                 onChange={handleInputChange}
                 placeholder="Enter your phone number"
+                className="mt-1"
               />
             </div>
 
             <div className="border-t pt-4">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">Total:</span>
-                <span className="text-xl font-bold">${state.total.toFixed(2)}</span>
+                <span className="font-medium text-sm sm:text-base">Total:</span>
+                <span className="text-lg sm:text-xl font-bold">${state.total.toFixed(2)}</span>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-xs sm:text-sm text-slate-600">
                 {state.itemCount} item{state.itemCount !== 1 ? 's' : ''} in cart
               </p>
             </div>
 
-            <div className="flex gap-2 pt-4">
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
               <Button
                 type="button"
                 variant="outline"

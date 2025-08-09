@@ -3,11 +3,16 @@ import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import type { User } from "next-auth"
 import { Button } from "./ui/button"
-import { LogOut, UserIcon, Home, Store } from "lucide-react"
+import { LogOut, UserIcon, Home, Store, ShoppingCart } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useCart } from "@/contexts/CartContext"
+import { useState } from "react"
+import Cart from "./Cart"
 const Navbar = () => {
   const { data: session } = useSession()
   const user: User = session?.user
+  const { state } = useCart()
+  const [isCartOpen, setIsCartOpen] = useState(false)
 
   return (
     <nav className="bg-white border-b border-slate-200 shadow-sm">
@@ -29,8 +34,24 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Auth Section */}
+          {/* Cart and Auth Section */}
           <div className="flex items-center space-x-4">
+            {/* Cart Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsCartOpen(true)}
+              className="relative"
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Cart
+              {state.itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {state.itemCount}
+                </span>
+              )}
+            </Button>
+
             {session ? (
               <>
                 {/* User Info */}
@@ -81,6 +102,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      
+      {/* Cart Modal */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </nav>
   )
 }

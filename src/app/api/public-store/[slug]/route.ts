@@ -5,11 +5,11 @@ import ProductModel from "@/model/Product";
 
 export async function GET(
   req: NextRequest,
-  context: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
     await dbConnect();
-    const { slug } = context.params;
+    const { slug } = await context.params;
     const { searchParams } = new URL(req.url);
     
     // Pagination parameters

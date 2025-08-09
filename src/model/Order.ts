@@ -8,7 +8,10 @@ export interface Order extends Document {
     quantity: number;
     totalPrice: number;
     stripeSessionId: string;
+    stripePaymentIntentId?: string;
     status: 'pending' | 'paid' | 'cancelled' | 'refunded' ;
+    commissionProcessed: boolean;
+    commissionId?: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -22,11 +25,14 @@ const OrderSchema: Schema<Order> = new Schema (
     quantity: { type: Number, required: true, default: 1, min: 1 },
     totalPrice: { type: Number, required: true, min: 0 },
     stripeSessionId: { type: String, required: true },
+    stripePaymentIntentId: { type: String },
     status: {
       type: String,
       enum: ['pending', 'paid', 'cancelled', 'refunded'],
       default: 'pending',
     },
+    commissionProcessed: { type: Boolean, default: false },
+    commissionId: { type: Schema.Types.ObjectId, ref: 'Commission' },
 },
     {
         timestamps: true

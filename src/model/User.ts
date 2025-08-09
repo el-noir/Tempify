@@ -11,6 +11,10 @@ export interface User extends Document {
     resetPasswordExpiry?: Date | null;
     role: 'user' | 'admin';
     isActive: boolean;
+    // Stripe Connect fields
+    stripeAccountId?: string;
+    stripeAccountStatus?: 'pending' | 'active' | 'rejected' | 'restricted';
+    stripeOnboardingComplete?: boolean;
 }
 
 const UserSchema : Schema<User> = new Schema({
@@ -57,6 +61,18 @@ const UserSchema : Schema<User> = new Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    // Stripe Connect fields
+    stripeAccountId: {
+        type: String,
+    },
+    stripeAccountStatus: {
+        type: String,
+        enum: ['pending', 'active', 'rejected', 'restricted'],
+    },
+    stripeOnboardingComplete: {
+        type: Boolean,
+        default: false
     },
 
 }, {

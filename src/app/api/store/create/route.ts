@@ -4,6 +4,7 @@ import {authOptions} from '../../auth/[...nextauth]/options'
 import dbConnect from "@/lib/connection/dbConnect";
 import StoreModel from "@/model/Store";
 import StorePlanModel from "@/model/StorePlan";
+import UserModel from "@/model/User";
 import {nanoid} from 'nanoid';
 import { success } from "zod";
 import { createStoreSchema } from "@/lib/validations";
@@ -47,6 +48,26 @@ const {name, description, planId} = parseResult.data;
         { success: false, message: "Invalid store plan selected" },
         { status: 404 }
       ) 
+    }
+
+    // Check if user has completed Stripe Connect onboarding
+    const user = await UserModel.findById(session.user._id);
+    if (!user) {
+        return NextResponse.json(
+            { success: false, message: "User not found" },
+            { status: 404 }
+        );
+    }
+
+    if (!user.stripeAccountId || !user.stripeOnboardingComplete || user.stripeAccountStatus !== 'active') {
+        return NextResponse.json(
+            { 
+                success: false, 
+                message: "Stripe Connect account setup required. Please complete your payment setup before creating a store.",
+                requiresStripeSetup: true
+            },
+            { status: 400 }
+        );
     }
 
     // generate a slug

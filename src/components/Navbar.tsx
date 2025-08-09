@@ -3,7 +3,7 @@ import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import type { User } from "next-auth"
 import { Button } from "./ui/button"
-import { LogOut, UserIcon, Home } from "lucide-react"
+import { LogOut, UserIcon, Home, Store } from "lucide-react"
 import { useRouter } from "next/navigation"
 const Navbar = () => {
   const { data: session } = useSession()
@@ -20,6 +20,14 @@ const Navbar = () => {
             </div>
             <span className="text-xl font-bold text-slate-900">Tempify</span>
           </Link>
+
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-6">
+            <Link href="/stores" className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 transition-colors">
+              <Store className="w-4 h-4" />
+              <span>Stores</span>
+            </Link>
+          </div>
 
           {/* Auth Section */}
           <div className="flex items-center space-x-4">

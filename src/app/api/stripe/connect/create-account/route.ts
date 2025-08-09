@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         const { country = 'US' } = await req.json();
 
         // Find the user
-        const user = await UserModel.findById(session.user.id);
+        const user = await UserModel.findById(session.user._id);
         if (!user) {
             return NextResponse.json(
                 { success: false, message: 'User not found' },

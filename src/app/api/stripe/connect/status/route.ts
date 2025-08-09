@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         }
 
         // Find the user
-        const user = await UserModel.findById(session.user.id);
+        const user = await UserModel.findById(session.user._id);
         if (!user || !user.stripeAccountId) {
             return NextResponse.json(
                 { success: false, message: 'Stripe account not found' },

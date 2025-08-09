@@ -19,6 +19,7 @@ import { StoreTable } from "@/components/dashboard/store-table"
 import { ProductTable } from "@/components/dashboard/product-table"
 import { ProfileSection } from "@/components/dashboard/profile-section"
 import { EditStoreDialog } from "@/components/dashboard/edit-store-dialog"
+import { useStripeConnect } from "@/hooks/useStripeConnect"
 import type { Store, Product } from '@/types/Store'
 
 function Dashboard() {
@@ -38,6 +39,7 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingProducts, setIsLoadingProducts] = useState(false)
   const [editStore, setEditStore] = useState<Store | null>(null)
+  const { status: stripeStatus } = useStripeConnect()
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -208,6 +210,7 @@ function Dashboard() {
           selectedStore={selectedStore}
           setSelectedStore={setSelectedStore}
           stores={stores}
+          stripeStatus={stripeStatus || undefined}
         />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 px-4 bg-white">

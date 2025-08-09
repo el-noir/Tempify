@@ -1,6 +1,6 @@
 "use client"
 
-import { Store, User, TrendingUp, Plus } from 'lucide-react'
+import { Store, User, TrendingUp, Plus, CreditCard } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import {
   Sidebar,
@@ -24,6 +24,10 @@ interface AppSidebarProps {
   selectedStore: string | null
   setSelectedStore: (storeId: string | null) => void
   stores: StoreType[]
+  stripeStatus?: {
+    onboardingComplete?: boolean
+    status?: string
+  }
 }
 
 export function AppSidebar({
@@ -32,7 +36,8 @@ export function AppSidebar({
   setActiveView,
   selectedStore,
   setSelectedStore,
-  stores
+  stores,
+  stripeStatus
 }: AppSidebarProps) {
   const router = useRouter()
 
@@ -41,6 +46,8 @@ export function AppSidebar({
     setSelectedStore(store.id)
     setActiveView("store")
   }
+
+  const isStripeSetupComplete = stripeStatus?.onboardingComplete && stripeStatus?.status === 'active'
 
   return (
     <Sidebar className="border-r border-slate-200">
@@ -77,6 +84,24 @@ export function AppSidebar({
                 >
                   <User className="h-4 w-4" />
                   <span>Profile</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  onClick={() => router.push('/dashboard/stripe')}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  <span>Payment Setup</span>
+                  {!isStripeSetupComplete && (
+                    <Badge variant="destructive" className="ml-auto text-xs">
+                      Required
+                    </Badge>
+                  )}
+                  {isStripeSetupComplete && (
+                    <Badge className="ml-auto bg-green-100 text-green-800 hover:bg-green-100 text-xs">
+                      ✓
+                    </Badge>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

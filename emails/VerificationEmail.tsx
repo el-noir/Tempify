@@ -45,7 +45,7 @@ export default function VerificationEmail({username, otp} : VerificationEmailPro
             </Row>
             <Row>
               <Text style={{ fontSize: "16px", lineHeight: "24px", marginBottom: "16px" }}>
-                Thank you for registering with True Feedback! Please use the following verification code to complete
+                Thank you for registering with Tempify! Please use the following verification code to complete
                 your registration:
               </Text>
             </Row>

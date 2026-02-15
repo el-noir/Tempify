@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Loader2, Store, Package, DollarSign, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -43,7 +43,7 @@ interface StoresData {
   pagination: Pagination
 }
 
-export default function StoresPage() {
+function StoresPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -311,5 +311,27 @@ function StoreCard({ store, onClick }: StoreCardProps) {
         </div>
       </div>
     </Card>
+  )
+}
+
+export default function StoresPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50">
+        <div className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-2/3" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-48" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <StoresPageContent />
+    </Suspense>
   )
 }

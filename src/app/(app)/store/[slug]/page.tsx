@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -53,7 +53,7 @@ interface StoreData {
   pagination: Pagination
 }
 
-export default function PublicStorePage() {
+function PublicStorePageContent() {
   const params = useParams()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -282,4 +282,24 @@ export default function PublicStorePage() {
   )
 }
 
-
+export default function PublicStorePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50">
+        <div className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-4 w-2/3" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-64" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <PublicStorePageContent />
+    </Suspense>
+  )
+}
